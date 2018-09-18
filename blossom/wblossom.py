@@ -64,17 +64,21 @@ class DressedGraph:
         self.weight = {(e[0], e[1]): e[2] for e in graph.rep}  # edge weight correspondence
 
         self.z = {i: maxweight / 2 for i in graph.vertex}  # valid for all vertex v and blossom in any level
-        # blossom is indexed by the tuple rep
+        # blossom is indexed by the tuple rep, which is stored in self.status
         self.status = {i: [(i,)] for i in graph.vertex}
         self.contain = {i: [i] for i in
                         graph.vertex}  # valid for top v, for v not in top level, its elements are for diff levels
+        # by status together with contain, we can know the over all structure of the nested blossoms
+        # status: {1: [(1,),(1,2),(3,1)], 2: [(2,),(1,2),(3,1)], 3:[(3,),(3,1)]}, each item of dict track the blossoms from bottom to top
+        # contain: {1:[1,2,3,4], 2:[3,4]...} each item of dict track all basic vertex contained in some high level effective vertex
+
         self.match = UGraph([])  # relative matching on top level
         self.rgraph = UGraph(self.graph.edge)  # reduced graph
         # quantities below clear every phase
         self.stf = {i: 'F' for i in graph.vertex}  # valid for all real v, no matter level it is
         self.stfb = {i: None for i in graph.vertex}  # valid for top blossom, labeled as v, None stands no blossom in v
         self.parent = {i: None for i in graph.vertex}  # valid for top level, b labeled as v
-        self.mark = {i: False for i in graph.edge}  # defined on edge of top level
+        self.mark = {i: False for i in graph.edge}  # defined on edge of top level, relative mark
         self.checkq = []  # check queue
 
         self.static_status = None # desinged for keep blossom info for the final all-expansion
@@ -118,16 +122,16 @@ class DressedGraph:
                 return True
         return False
 
-    def top_vertice(self):  # set of labels in top level as vertex label
+    def top_vertice(self):  # set of labels in top level as vertex
         topset = set()
         for v in self.status.items():
             topset.add(v[1][-1][0])
         return topset
 
-    def blossom_level(self, v):  # 0 for bare nodes on top level
+    def blossom_level(self, v):  # 0 for bare nodes on top level, n for n nested blossom for basic v vertex
         return len(self.status[v]) - 1
 
-    def top_rep(self, v):
+    def top_rep(self, v): # given a basic vertex, return the top level rep of the blossom containing v
         return self.status[v][-1][0]
 
     def edge_tonew(self, edge):  # from initial into graph of top level
@@ -137,7 +141,7 @@ class DressedGraph:
             return None  # original edges within blossom
         return res
 
-    def edge_toold(self, edge): # from edge in top level to original edge
+    def edge_toold(self, edge): # from edge in top level to original edge, a list of edge
         e = edge_reg(edge)
         result = []
         for u in self.contain[e[0]]:
@@ -175,7 +179,7 @@ class DressedGraph:
         path.extend(self.path_to_root(self.parent[v]))
         return path
 
-    def path_to_node(self, v, w):
+    def path_to_node(self, v, w): # if v w in one tree, return path to form blossom, with base in the first element
         path1 = []
         pathv = self.path_to_root(v)
         pathw = self.path_to_root(w)
@@ -252,6 +256,7 @@ class DressedGraph:
         logger.debug('status: %s' % self.status)
 
     def expand_blossom(self, vrep, delz = True):  # v is the rep of the blossom at top level
+                                                # delz is False for final expand-all
         if self.blossom_level(vrep) == 0:  # compatible with vertex expansion
             return None
         btuple = self.status[vrep][-1]
@@ -378,7 +383,7 @@ class DressedGraph:
         self.match = UGraph(new_edges)
         logger.debug('ending of expansion blossom: %s' % list(btuple))
 
-    def graph_update(self):  # reconstruct the rgraph based on current status
+    def graph_update(self):  # reconstruct the rgraph based on current self.status
         graph_edges = set()
         for e in self.graph.edge:
             newe = self.edge_tonew(e)
@@ -386,7 +391,7 @@ class DressedGraph:
                 graph_edges.add(newe)
         self.rgraph = UGraph(list(graph_edges))
 
-    def phase_start(self):
+    def phase_start(self): # initialize and reset some states for a new phase
         self.stf = {i: 'F' for i in self.graph.vertex}  # valid for all real v, no matter level it is
         self.stfb = {i: None for i in
                      self.graph.vertex}  # valid for top blossom, labeled as v, None stands no blossom in than v
@@ -515,7 +520,7 @@ class DressedGraph:
                 # self.check_optimum()
                 return True
 
-    def reweight(self):
+    def reweight(self): # reweight all z, if no possible path can be found
         # 1
         d1 = None
         v1 = []
@@ -637,7 +642,7 @@ class DressedGraph:
                 new_edges.remove(edge_reg((path[i], path[i + 1])))
         self.match = UGraph(new_edges)
 
-    def z_on_edge(self, edge):
+    def z_on_edge(self, edge): # given original edge, return the z value of the edge, by considering all nonzero blossom
         z = 0
         if self.static_status is not None:
             blist = self.blossoms_cover_edge(edge)
@@ -647,7 +652,7 @@ class DressedGraph:
         return z
 
 
-    def check_optimum(self):
+    def check_optimum(self): # final result check based on theorem
         for e in self.graph.edge:
             assert self.z_on_edge(e) >= self.weight[e]
         for e in self.match.edge:
