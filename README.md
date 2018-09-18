@@ -13,6 +13,34 @@ To find matching of max cardinality,  also known as perfect matching, we ask hel
 
 But the weighted generalization of blossom algorithm is far more challenging than I originally expected. The principle and mechanism behind the algorithm take some time to understand, and the implementation of the ideas with all corner cases isn't an easy task (especially true for me, since I thought it is harder to understand others' implementation than just doing it by myself, so I wrote the code from scratch, only based on the paper even without any pieces of pseudocode). 
 
+## Quick Start
+
+First of all, it is worth noting that this implementation runs in $O(n^2m)$ which is not the optimal speed one can achieve. Therefore, for product use, one can search for other libraries. This work is more educational than practical use.
+
+```python
+from blossom import find_perfect_matching
+from blossom import find_maximum_matching
+from blossom import UGraph, generate_random_graph, generate_random_graph_w
+find_perfect_matching(UGraph([(0,1),(1,2),(2,0)])).edge
+# [(0,1)]
+find_maximum_matching(UGraph([(0,1,3),(1,2,2),(2,0,2)])).edge
+# [(0,1)]
+# or one can generate random graphs to use
+generate_random_graph(10,0.2)
+generate_random_graph_w(10,0.3,100)
+```
+
+If one want to know what is happening step by step within the algorithm, it is easy to configue the log.
+
+```python
+import logging
+logger = logging.getLogger('blossom')
+logger.setLevel(logging.WARNING)
+ch = logging.StreamHandler()
+ch.setLevel(logging.DEBUG)
+logger.addHandler(ch)
+```
+
 ## Reference
 
 * [Paths, Trees and Flowers (Edmonds' original work)](https://cms.math.ca/openaccess/cjm/v17/cjm1965v17.0449-0467.pdf)
