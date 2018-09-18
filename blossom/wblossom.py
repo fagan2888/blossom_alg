@@ -661,11 +661,12 @@ class DressedGraph:
 
 def find_maximum_matching(graph_edges, debug = False):
     '''
+    find match with maximum total weights on undirected weighted graph
 
     :param graph_edges: edge list in the form : [(2,3,6),(5,4,3),(4,2,7)], in each tuple, the first two elements are edge
         end vertex, and the last term is the weight of corresponding edge
     :param debug: boolean, default False, if set as True, the results would be check based on the theorem
-    :returns:
+    :returns: UGraph object, self.edge attribute give the mathcing edge tuple list
     '''
     st = DressedGraph(UGraph(graph_edges))
     st.phases()

@@ -12,6 +12,13 @@ from blossom.graph import UGraph, Blossom
 from blossom.tree import Tree
 
 def find_perfect_matching(graph, match=None):
+    '''
+    find perfect matching with max cardinality on unweighted undirected graph
+
+    :param graph: UGraph object, not compatible with weighted UGraph
+    :param match: UGraph object, default None at the beginning
+    :returns: UGraph object, self.edge attribute give the mathcing edge tuple list
+    '''
     if match is None:
         match = UGraph([])
     path = find_aug_path(graph, match)

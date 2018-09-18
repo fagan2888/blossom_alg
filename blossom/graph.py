@@ -3,6 +3,11 @@ logger = logging.getLogger('blossom')
 import random
 
 class UGraph():
+    '''
+    Graph object for undirected graph
+
+    :param graphlist: list of tuples, [(0,1),(2,3)], each pair stand for an edge with two vertex
+    '''
     def __init__(self, graphlist):
 
         if not graphlist:
@@ -81,6 +86,13 @@ class Blossom():
 
 
 def generate_random_graph(size, density = 0.5):
+    '''
+    generate random unweighted undirected graph
+
+    :param size: the number of vertices in the graph
+    :param density: the expected edge number compared to size^2
+    :return: UGraph object
+    '''
     edges = []
     for i in range(size):
         for j in range(i+1, size):
@@ -89,6 +101,14 @@ def generate_random_graph(size, density = 0.5):
     return UGraph(edges)
 
 def generate_random_graph_w(size, density=0.5, window = 10):
+    '''
+    generate random weighted undirected graph
+
+    :param size: the number of vertices in the graph
+    :param density: the expected edge number compared to size^2
+    :param window: int, the range of weight, weight is all integer for this func generator
+    :return: UGraph object
+    '''
     edges = []
     for i in range(size):
         for j in range(i+1, size):
