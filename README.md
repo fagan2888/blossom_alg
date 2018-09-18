@@ -35,11 +35,13 @@ If one want to know what is happening step by step within the algorithm, it is e
 ```python
 import logging
 logger = logging.getLogger('blossom')
-logger.setLevel(logging.WARNING)
+logger.setLevel(logging.DEBUG)
 ch = logging.StreamHandler()
 ch.setLevel(logging.DEBUG)
 logger.addHandler(ch)
 ```
+
+For more info, read the docstring of relevant APIs. 
 
 ## Reference
 
