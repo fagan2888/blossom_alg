@@ -679,3 +679,20 @@ def find_maximum_matching(graph_edges, debug = False):
         st.check_optimum()
     return st.match
 
+
+def find_perfect_maximum_matching(graph_edges):
+    '''
+    find perfect matching with maximum total weights on undirected weighted graph
+
+    :param graph_edges: edge list in the form : [(2,3,6),(5,4,3),(4,2,7)], in each tuple, the first two elements are edge
+       end vertex, and the last term is the weight of corresponding edge
+    :param debug: boolean, default False, if set as True, the results would be check based on the theorem
+    :returns: UGraph object, self.edge attribute give the mathcing edge tuple list
+    '''
+    weights_sum = sum(e[2] for e in graph_edges)
+    reweight_graph = []
+    for e in graph_edges:
+        reweight_graph.append((e[0],e[1],e[2]+weights_sum))
+    st = DressedGraph(UGraph(reweight_graph))
+    st.phases()
+    return st.match

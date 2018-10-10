@@ -2,7 +2,7 @@ import sys
 sys.path.insert(0, "../")
 
 from blossom import find_perfect_matching
-from blossom import find_maximum_matching
+from blossom import find_maximum_matching, find_perfect_maximum_matching
 from blossom import UGraph, generate_random_graph, generate_random_graph_w
 
 test_uwgraph = []
@@ -63,5 +63,6 @@ def test_w():
         assert set(find_maximum_matching(test_wgraph[i],debug = True).edge) == set(answer_graph[i])
     random_wgraph = []
     for i in range(30):
-        random_wgraph.append(generate_random_graph_w(33, density=0.23, window=11))
+        random_wgraph.append(generate_random_graph_w(36, density=0.25, window=12))
         find_maximum_matching(random_wgraph[i].rep, debug = True)
+        find_perfect_maximum_matching(random_wgraph[i].rep)

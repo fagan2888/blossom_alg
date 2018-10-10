@@ -19,18 +19,21 @@ First of all, it is worth noting that this implementation runs in $O(n^2m)$ whic
 
 ```python
 from blossom import find_perfect_matching
-from blossom import find_maximum_matching
+from blossom import find_maximum_matching, find_perfect_maximum_matching
 from blossom import UGraph, generate_random_graph, generate_random_graph_w
 find_perfect_matching(UGraph([(0,1),(1,2),(2,0)])).edge
 # [(0,1)]
-find_maximum_matching(UGraph([(0,1,3),(1,2,2),(2,0,2)])).edge
+find_maximum_matching([(0,1,3),(1,2,2),(2,0,2)]).edge
 # [(0,1)]
+find_perfect_maximum_matching([(0,1,3),(1,2,2),(2,0,2)]).edge
+# [(0,1)]
+# this is different from only maximum matching as maximum matching is not necessary a perfect matching
 # or one can generate random graphs to use
 generate_random_graph(10,0.2)
 generate_random_graph_w(10,0.3,100)
 ```
 
-If one want to know what is happening step by step within the algorithm, it is easy to configue the log.
+If one wants to know what is happening step by step within the algorithm, it is easy to configue the log.
 
 ```python
 import logging
